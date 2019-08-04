@@ -18,14 +18,15 @@ var database = firebase.database();
 //* playerone or playertwo
 var uid = null;
 var oid = null;
+var name = null;
 var udbid = null;
 var odbid = null;
 var wins = 0;
 var loses = 0;
-var draws = 0
+var draws = 0;
 var oppwins = 0;
 var opploses = 0;
-var oppdraws = 0
+var oppdraws = 0;
 var outcome = "";
 var oppoutcome = "";
 //! ---------------------------- END global var -----------------------------//
@@ -41,47 +42,43 @@ var connectionsRef = database.ref("/connections");
 var connectedRef = database.ref(".info/connected");
 
 //client connection event listener
-connectedRef.on("value", function (snapshot) {
+connectedRef.on("value", function(snapshot) {
 	//* if connected
 	if (snapshot.val()) {
-
-		var con = connectionsRef.push(true)
-		udbid = con.key
+		var con = connectionsRef.push(true);
+		udbid = con.key;
 		con.set({
 			player: "",
 			name: "",
 			wins: 0,
 			draws: 0,
 			loses: 0,
-			choice: "",
-		})
+			choice: ""
+		});
 
 		con.onDisconnect().remove();
-
-
 	}
 });
 
-connectionsRef.on("value", function (snapshot) {
+connectionsRef.on("value", function(snapshot) {
 	// sets user profile
 	if (uid === null) {
 		if (snapshot.numChildren() === 1) {
-			uid = "playerone"
-			oid = "playertwo"
-			$(`#${uid}header`).append($("<p>").text("you"))
-			$(`#${uid}name`).append($("<p>").text("waiting on other player"))
-			$(`#${oid}header`).append($("<p>").text("player 2"))
-			$(`#${oid}name`).append($("<p>").text("waiting for player"))
-			createOptions()
-
+			uid = "playerone";
+			oid = "playertwo";
+			$(`#${uid}header`).append($("<p>").text("you"));
+			$(`#${uid}name`).append($("<p>").text("waiting on other player"));
+			$(`#${oid}header`).append($("<p>").text("player 2"));
+			$(`#${oid}name`).append($("<p>").text("waiting for player"));
+			createOptions();
 		} else {
-			uid = "playertwo"
-			oid = "playerone"
-			$(`#${uid}header`).append($("<p>").text("you"))
-			$(`#${uid}name`).append($("<p>").text("waiting on other player"))
-			$(`#${oid}header`).append($("<p>").text("player 2"))
-			$(`#${oid}name`).append($("<p>").text("waiting for player"))
-			createOptions()
+			uid = "playertwo";
+			oid = "playerone";
+			$(`#${uid}header`).append($("<p>").text("you"));
+			$(`#${uid}name`).append($("<p>").text("waiting on other player"));
+			$(`#${oid}header`).append($("<p>").text("player 2"));
+			$(`#${oid}name`).append($("<p>").text("waiting for player"));
+			createOptions();
 		}
 	}
 
@@ -89,215 +86,271 @@ connectionsRef.on("value", function (snapshot) {
 	if (snapshot.numChildren() === 2) {
 		//* gets opp pathway
 		if (uid === "playerone") {
-			odbid = (Object.keys(snapshot.val())[1])
+			odbid = Object.keys(snapshot.val())[1];
 		} else if (uid === "playertwo") {
-			odbid = (Object.keys(snapshot.val())[0])
+			odbid = Object.keys(snapshot.val())[0];
 		}
 		//* sets up pathways and records
-		var yourDB = snapshot.child(udbid).val()
-		var oppDB = snapshot.child(odbid).val()
-		wins = yourDB.wins
-		loses = yourDB.loses
-		draws = yourDB.draws
+		var yourDB = snapshot.child(udbid).val();
+		var oppDB = snapshot.child(odbid).val();
+		wins = yourDB.wins;
+		loses = yourDB.loses;
+		draws = yourDB.draws;
 
 		//* name creation
 		if (!yourDB.name) {
 			$(`#${uid}name`).empty();
-			let newForm = $("<form>")
-			let newInput = $("<input>").addClass("nameinput").attr("placeholder", "name then press enter")
-			newForm.append(newInput)
-			$(`#${uid}name`).append(newForm)
+			let newDiv = $("<div id='name_form'>");
+			let newForm = $("<form onsubmit='submitedForm()'>");
+			let newInput = $("<input>")
+				.addClass("nameinput")
+				.attr("placeholder", "name then press enter");
+			let newButton = $("<button>")
+				.addClass("namebutton")
+				.attr("id", "button")
+				.attr("type", "submit")
+				.text("send");
+			newForm.append(newInput, newButton);
+			newDiv.append(newForm);
+			$(`#${uid}name`).append(newDiv);
+		} else {
+			$(`#${uid}name`).empty();
+			$(`#${uid}name`).append($("<p>").text(name));
+		}
+
+		if (!oppDB.name) {
+			$(`#${oid}name`).empty();
+			$(`#${oid}name`).append($("<p>").text("waiting on player name"));
+		} else {
+			$(`#${oid}name`).empty();
+			$(`#${oid}name`).append($("<p>").text(oppDB.name));
 		}
 
 		//* compares choices
 		if (yourDB.choice && oppDB.choice) {
-			var dbpath = database.ref(`/connections/${udbid}`)
+			var dbpath = database.ref(`/connections/${udbid}`);
 
 			if (yourDB.choice === "rock") {
 				//! draw
 				if (oppDB.choice === "rock") {
-					oppdraws++
-					draws++
-					outcome = "draw"
-					oppoutcome = "draw"
+					oppdraws++;
+					draws++;
+					outcome = "draw";
+					oppoutcome = "draw";
 					dbpath.update({
 						choice: "",
 						draws: draws
-					})
+					});
 				}
 				//! win
 				if (oppDB.choice === "scissors") {
-					opploses++
-					wins++
-					outcome = "won!"
-					oppoutcome = "loss!"
+					opploses++;
+					wins++;
+					outcome = "won!";
+					oppoutcome = "loss!";
 					dbpath.update({
 						choice: "",
 						wins: wins
-					})
+					});
 				}
 
 				//! loss
 				if (oppDB.choice === "paper") {
-					oppwins++
-					loses++
-					outcome = "loss!"
-					oppoutcome = "won!"
+					oppwins++;
+					loses++;
+					outcome = "loss!";
+					oppoutcome = "won!";
 					dbpath.update({
 						choice: "",
 						loses: loses
-					})
+					});
 				}
-
 			}
 
 			if (yourDB.choice === "paper") {
 				//! draw
 				if (oppDB.choice === "paper") {
-					oppdraws++
-					draws++
-					outcome = "draw"
-					oppoutcome = "draw"
+					oppdraws++;
+					draws++;
+					outcome = "draw";
+					oppoutcome = "draw";
 					dbpath.update({
 						choice: "",
 						draws: draws
-					})
+					});
 				}
 
 				//! win
 				if (oppDB.choice === "rock") {
-					opploses++
-					wins++
-					outcome = "won!"
-					oppoutcome = "loss!"
+					opploses++;
+					wins++;
+					outcome = "won!";
+					oppoutcome = "loss!";
 					dbpath.update({
 						choice: "",
 						wins: wins
-					})
+					});
 				}
 
 				//! lose
 				if (oppDB.choice === "scissors") {
-					oppwins++
-					loses++
-					outcome = "lose!"
-					oppoutcome = "won!"
+					oppwins++;
+					loses++;
+					outcome = "lose!";
+					oppoutcome = "won!";
 					dbpath.update({
 						choice: "",
 						loses: loses
-					})
+					});
 				}
 			}
 
 			if (yourDB.choice === "scissors") {
 				//! draw
 				if (oppDB.choice === "scissors") {
-					oppdraws++
-					draws++
-					outcome = "draw"
-					oppoutcome = "draw"
+					oppdraws++;
+					draws++;
+					outcome = "draw";
+					oppoutcome = "draw";
 					dbpath.update({
 						choice: "",
 						draws: draws
-					})
+					});
 				}
 
 				//! win
 				if (oppDB.choice === "paper") {
-					opploses++
-					wins++
-					outcome = "won!"
-					oppoutcome = "loss!"
+					opploses++;
+					wins++;
+					outcome = "won!";
+					oppoutcome = "loss!";
 					dbpath.update({
 						choice: "",
 						wins: wins
-					})
+					});
 				}
 
 				//! lose
 				if (oppDB.choice === "rock") {
-					oppwins++
-					loses++
-					outcome = "loss!"
-					oppoutcome = "won!"
+					oppwins++;
+					loses++;
+					outcome = "loss!";
+					oppoutcome = "won!";
 					dbpath.update({
 						choice: "",
 						loses: loses
-					})
+					});
 				}
 			}
 
-			createOptions()
+			createOptions();
 		}
 
 		if (yourDB.choice && !oppDB.choice) {
 			//! waiting on opp
-			$(`#${uid}options`).empty()
-			let youwaiting = $("<div>").addClass("waiting").text("waiting on opponent...")
-			$(`#${uid}options`).append(youwaiting)
+			$(`#${uid}options`).empty();
+			let youwaiting = $("<div>")
+				.addClass("waiting")
+				.text("waiting on opponent...");
+			$(`#${uid}options`).append(youwaiting);
 		}
 
 		if (!yourDB.choice && oppDB.choice) {
 			//! waiting on you
-			$(`#${oid}options`).empty()
-			let oppwaiting = $("<div>").addClass("waiting").text("waiting on you..")
-			$(`#${oid}options`).append(oppwaiting)
+			$(`#${oid}options`).empty();
+			let oppwaiting = $("<div>")
+				.addClass("waiting")
+				.text("waiting on you..");
+			$(`#${oid}options`).append(oppwaiting);
 		}
-
 	}
-
-
 });
 
 //!-------------------------------- END connection reference block -------------------------//
-
+//* creates rock paper scissors options
 function createOptions() {
 	$(`#${uid}options`).empty();
 	$(`#${oid}options`).empty();
 	$(`#${uid}scores`).empty();
 	$(`#${oid}scores`).empty();
 
-
 	//** your options */
-	let rockOption = $("<div>").addClass("option").append($("<p>").text("rock"))
-	let paperOption = $("<div>").addClass("option").append($("<p>").text("paper"))
-	let scissorsOption = $("<div>").addClass("option").append($("<p>").text("scissors"))
-	$(`#${uid}options`).append(rockOption, paperOption, scissorsOption)
+	let rockOption = $("<div>")
+		.addClass("option")
+		.append($("<p>").text("rock"));
+	let paperOption = $("<div>")
+		.addClass("option")
+		.append($("<p>").text("paper"));
+	let scissorsOption = $("<div>")
+		.addClass("option")
+		.append($("<p>").text("scissors"));
+	$(`#${uid}options`).append(rockOption, paperOption, scissorsOption);
 
 	//** other players options */
-	let choosing = $("<div>").addClass("waiting").text("choosing...")
-	$(`#${oid}options`).append(choosing)
-
+	let choosing = $("<div>")
+		.addClass("waiting")
+		.text("choosing...");
+	$(`#${oid}options`).append(choosing);
 
 	//** your score */
-	let outcomescore = $("<div>").addClass("score").append($("<p>").text(outcome))
-	let winsscore = $("<div>").addClass("score").append($("<p>").text(`wins: ${wins}`))
-	let losesscore = $("<div>").addClass("score").append($("<p>").text(`loses: ${loses}`))
-	let drawsscore = $("<div>").addClass("score").append($("<p>").text(`draws: ${draws}`))
-	$(`#${uid}scores`).append(outcomescore, winsscore, losesscore, drawsscore)
+	let outcomescore = $("<div>")
+		.addClass("score")
+		.append($("<p>").text(outcome));
+	let winsscore = $("<div>")
+		.addClass("score")
+		.append($("<p>").text(`wins: ${wins}`));
+	let losesscore = $("<div>")
+		.addClass("score")
+		.append($("<p>").text(`loses: ${loses}`));
+	let drawsscore = $("<div>")
+		.addClass("score")
+		.append($("<p>").text(`draws: ${draws}`));
+	$(`#${uid}scores`).append(outcomescore, winsscore, losesscore, drawsscore);
 
 	//** opp score */
-	let oppoutcomescore = $("<div>").addClass("score").append($("<p>").text(oppoutcome))
-	let oppwinsscore = $("<div>").addClass("score").append($("<p>").text(`wins: ${oppwins}`))
-	let opplosesscore = $("<div>").addClass("score").append($("<p>").text(`loses: ${opploses}`))
-	let oppdrawsscore = $("<div>").addClass("score").append($("<p>").text(`draws: ${oppdraws}`))
-	$(`#${oid}scores`).append(oppoutcomescore, oppwinsscore, opplosesscore, oppdrawsscore)
+	let oppoutcomescore = $("<div>")
+		.addClass("score")
+		.append($("<p>").text(oppoutcome));
+	let oppwinsscore = $("<div>")
+		.addClass("score")
+		.append($("<p>").text(`wins: ${oppwins}`));
+	let opplosesscore = $("<div>")
+		.addClass("score")
+		.append($("<p>").text(`loses: ${opploses}`));
+	let oppdrawsscore = $("<div>")
+		.addClass("score")
+		.append($("<p>").text(`draws: ${oppdraws}`));
+	$(`#${oid}scores`).append(
+		oppoutcomescore,
+		oppwinsscore,
+		opplosesscore,
+		oppdrawsscore
+	);
 }
 
 function optionClicked(playerchoice) {
-
 	database.ref(`/connections/${udbid}`).update({
 		choice: playerchoice
-	})
-
+	});
 }
 
+//* name submition form
+function submitedForm() {
+	event.preventDefault();
 
+	name = $(".nameinput")
+		.val()
+		.trim();
 
-$(document).ready(function () {
-	$(".options").on("click", ".option", function () {
-		playerchoice = ($(this).text())
-		optionClicked(playerchoice)
-	})
+	database.ref(`/connections/${udbid}`).update({
+		name: name
+	});
+}
 
-})
+//* event listenters
+$(document).ready(function() {
+	$(".options").on("click", ".option", function() {
+		playerchoice = $(this).text();
+		optionClicked(playerchoice);
+	});
+});
