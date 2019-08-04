@@ -1,0 +1,68 @@
+body {
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 3fr 3fr 1fr;
+    grid-template-rows: 1fr 3fr 1fr;
+    grid-template-areas:
+        ". . . ."
+        ". playerone playertwo ."
+        ". outcome . .";
+}
+
+#playerone {
+    grid-area: playerone;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 2fr 3fr;
+    grid-template-areas:
+        "p1header"
+        "p1name"
+        "p1options"
+        "p1scores";
+}
+
+#p1header {
+    grid-area: p1header;
+}
+
+#p1name {
+    grid-area: p1name;
+}
+
+#p1scores {
+    grid-area: p1scores;
+}
+
+#p1options {
+    grid-area: p1options;
+}
+
+#playertwo {
+    grid-area: playertwo;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr 2fr 3fr;
+    grid-template-areas:
+        "p2header"
+        "p2name"
+        "p2options"
+        "p2scores";
+}
+
+
+#p2name {
+    grid-area: p2name;
+}
+
+#p2scores {
+    grid-area: p2scores;
+}
+
+#p2options {
+    grid-area: p2options;
+}
+
+
+.outcome {
+    grid-area: outcome
+}

@@ -14,13 +14,21 @@ firebase.initializeApp(firebaseConfig);
 // Create a variable to reference the database.
 var database = firebase.database();
 //! ---------------------------- END Your web app's Firebase configuration ---------------------------//
-//! ---------------------------- Initial var -----------------------------//
-var player1 = null;
-var player2 = null;
-var playerOneName = "";
-var playerTwoName = "";
-console.log('reloaded"');
-//! ---------------------------- END Initial var -----------------------------//
+//! ---------------------------- global var -----------------------------//
+//* playerone or playertwo
+var uid = null;
+var oid = null;
+var udbid = null;
+var odbid = null;
+var wins = 0;
+var loses = 0;
+var draws = 0
+var oppwins = 0;
+var opploses = 0;
+var oppdraws = 0
+var outcome = "";
+var oppoutcome = "";
+//! ---------------------------- END global var -----------------------------//
 //!------------------------------------ connection reference block ----------------------------//
 
 // connectionsRef references a specific location in our database.
@@ -33,100 +41,263 @@ var connectionsRef = database.ref("/connections");
 var connectedRef = database.ref(".info/connected");
 
 //client connection event listener
-connectedRef.on("value", function(snapshot) {
+connectedRef.on("value", function (snapshot) {
 	//* if connected
 	if (snapshot.val()) {
-		//* ADD
-		//user to connection list
-		var con = connectionsRef.push(true);
 
-		//* REMOVE
-		//user frome connection list when disconnect
+		var con = connectionsRef.push(true)
+		udbid = con.key
+		con.set({
+			player: "",
+			name: "",
+			wins: 0,
+			draws: 0,
+			loses: 0,
+			choice: "",
+		})
+
 		con.onDisconnect().remove();
+
+
 	}
 });
 
-connectionsRef.on("value", function(snapshot) {
-	//**PLAYER 1 */
-	if (snapshot.child("Player1").exists()) {
-		P1 = snapshot.val().Player1;
-		$("#p1name").text(P1.name);
-		$("#new_player_one").remove();
-	} else {
-		$("#p1name").text("Waiting on player 1 name...");
+connectionsRef.on("value", function (snapshot) {
+	// sets user profile
+	if (uid === null) {
+		if (snapshot.numChildren() === 1) {
+			uid = "playerone"
+			oid = "playertwo"
+			$(`#${uid}header`).append($("<p>").text("you"))
+			$(`#${uid}name`).append($("<p>").text("waiting on other player"))
+			$(`#${oid}header`).append($("<p>").text("player 2"))
+			$(`#${oid}name`).append($("<p>").text("waiting for player"))
+			createOptions()
 
-		//**CREATES PLAYER 1 INPUT NAME REQUEST */
-		$("#new_player_one").remove();
-		console.log("player 1 doesn't exist");
-		newDiv = $("<div id='new_player_one'>");
-		newForm = $("<form>");
-		newInput = $("<input>")
-			.addClass("new_input")
-			.attr("id", "player_one_name_input")
-			.attr("type", "text");
-		newBtn = $("<button>")
-			.addClass("new_submit")
-			.attr("id", "player_one_name_submit")
-			.attr("type", "submit")
-			.text("Submit");
-		newForm.append(newInput, newBtn);
-		newDiv.append(newForm);
-		$("#playerone").append(newDiv);
+		} else {
+			uid = "playertwo"
+			oid = "playerone"
+			$(`#${uid}header`).append($("<p>").text("you"))
+			$(`#${uid}name`).append($("<p>").text("waiting on other player"))
+			$(`#${oid}header`).append($("<p>").text("player 2"))
+			$(`#${oid}name`).append($("<p>").text("waiting for player"))
+			createOptions()
+		}
 	}
-	//**PLAYER 2 */
-	if (snapshot.child("Player2").exists()) {
-		P2 = snapshot.val().Player2;
-		$("#p2name").text(P2.name);
-		$("#new_player_two").remove();
-	} else {
-		$("#p2name").text("Waiting on player 2 name...");
 
-		//**CRREATES PLAYER 2 INPUT NAME REQUEST */
-		$("#new_player_two").remove();
-		console.log("player 2 doesn't exist");
-		newDiv = $("<div id='new_player_two'>");
-		newForm = $("<form>");
-		newInput = $("<input>")
-			.addClass("new_input")
-			.attr("id", "player_two_name_input")
-			.attr("type", "text");
-		newBtn = $("<button>")
-			.addClass("new_submit")
-			.attr("id", "player_two_name_submit")
-			.attr("type", "submit")
-			.text("Submit");
-		newForm.append(newInput, newBtn);
-		newDiv.append(newForm);
-		$("#playertwo").append(newDiv);
+	//! if both players are in
+	if (snapshot.numChildren() === 2) {
+		//* gets opp pathway
+		if (uid === "playerone") {
+			odbid = (Object.keys(snapshot.val())[1])
+		} else if (uid === "playertwo") {
+			odbid = (Object.keys(snapshot.val())[0])
+		}
+		//* sets up pathways and records
+		var yourDB = snapshot.child(udbid).val()
+		var oppDB = snapshot.child(odbid).val()
+		wins = yourDB.wins
+		loses = yourDB.loses
+		draws = yourDB.draws
+
+		//* name creation
+		if (!yourDB.name) {
+			$(`#${uid}name`).empty();
+			let newForm = $("<form>")
+			let newInput = $("<input>").addClass("nameinput").attr("placeholder", "name then press enter")
+			newForm.append(newInput)
+			$(`#${uid}name`).append(newForm)
+		}
+
+		//* compares choices
+		if (yourDB.choice && oppDB.choice) {
+			var dbpath = database.ref(`/connections/${udbid}`)
+
+			if (yourDB.choice === "rock") {
+				//! draw
+				if (oppDB.choice === "rock") {
+					oppdraws++
+					draws++
+					outcome = "draw"
+					oppoutcome = "draw"
+					dbpath.update({
+						choice: "",
+						draws: draws
+					})
+				}
+				//! win
+				if (oppDB.choice === "scissors") {
+					opploses++
+					wins++
+					outcome = "won!"
+					oppoutcome = "loss!"
+					dbpath.update({
+						choice: "",
+						wins: wins
+					})
+				}
+
+				//! loss
+				if (oppDB.choice === "paper") {
+					oppwins++
+					loses++
+					outcome = "loss!"
+					oppoutcome = "won!"
+					dbpath.update({
+						choice: "",
+						loses: loses
+					})
+				}
+
+			}
+
+			if (yourDB.choice === "paper") {
+				//! draw
+				if (oppDB.choice === "paper") {
+					oppdraws++
+					draws++
+					outcome = "draw"
+					oppoutcome = "draw"
+					dbpath.update({
+						choice: "",
+						draws: draws
+					})
+				}
+
+				//! win
+				if (oppDB.choice === "rock") {
+					opploses++
+					wins++
+					outcome = "won!"
+					oppoutcome = "loss!"
+					dbpath.update({
+						choice: "",
+						wins: wins
+					})
+				}
+
+				//! lose
+				if (oppDB.choice === "scissors") {
+					oppwins++
+					loses++
+					outcome = "lose!"
+					oppoutcome = "won!"
+					dbpath.update({
+						choice: "",
+						loses: loses
+					})
+				}
+			}
+
+			if (yourDB.choice === "scissors") {
+				//! draw
+				if (oppDB.choice === "scissors") {
+					oppdraws++
+					draws++
+					outcome = "draw"
+					oppoutcome = "draw"
+					dbpath.update({
+						choice: "",
+						draws: draws
+					})
+				}
+
+				//! win
+				if (oppDB.choice === "paper") {
+					opploses++
+					wins++
+					outcome = "won!"
+					oppoutcome = "loss!"
+					dbpath.update({
+						choice: "",
+						wins: wins
+					})
+				}
+
+				//! lose
+				if (oppDB.choice === "rock") {
+					oppwins++
+					loses++
+					outcome = "loss!"
+					oppoutcome = "won!"
+					dbpath.update({
+						choice: "",
+						loses: loses
+					})
+				}
+			}
+
+			createOptions()
+		}
+
+		if (yourDB.choice && !oppDB.choice) {
+			//! waiting on opp
+			$(`#${uid}options`).empty()
+			let youwaiting = $("<div>").addClass("waiting").text("waiting on opponent...")
+			$(`#${uid}options`).append(youwaiting)
+		}
+
+		if (!yourDB.choice && oppDB.choice) {
+			//! waiting on you
+			$(`#${oid}options`).empty()
+			let oppwaiting = $("<div>").addClass("waiting").text("waiting on you..")
+			$(`#${oid}options`).append(oppwaiting)
+		}
+
 	}
+
+
 });
 
 //!-------------------------------- END connection reference block -------------------------//
 
-//!--------------------------------Button Event---------------------------------//
+function createOptions() {
+	$(`#${uid}options`).empty();
+	$(`#${oid}options`).empty();
+	$(`#${uid}scores`).empty();
+	$(`#${oid}scores`).empty();
 
-$(document).ready(function() {
-	$(".new_submit").on("click", "#player_one_name_submit", function(event) {
-		event.preventDefault();
 
-		let inputValue = $("#player_one_name_inpput")
-			.val()
-			.trim();
-		console.log("name entered " + inputValue);
-		if (inputValue === "") {
-			return false;
-		} else {
-			let newPlayer1 = {
-				name: inputValue,
-				wins: 0,
-				loses: 0,
-				ties: 0,
-				choice: ""
-			};
+	//** your options */
+	let rockOption = $("<div>").addClass("option").append($("<p>").text("rock"))
+	let paperOption = $("<div>").addClass("option").append($("<p>").text("paper"))
+	let scissorsOption = $("<div>").addClass("option").append($("<p>").text("scissors"))
+	$(`#${uid}options`).append(rockOption, paperOption, scissorsOption)
 
-			database.ref("/connections/Player1").set({
-				newPlayer1
-			});
-		}
-	});
-});
+	//** other players options */
+	let choosing = $("<div>").addClass("waiting").text("choosing...")
+	$(`#${oid}options`).append(choosing)
+
+
+	//** your score */
+	let outcomescore = $("<div>").addClass("score").append($("<p>").text(outcome))
+	let winsscore = $("<div>").addClass("score").append($("<p>").text(`wins: ${wins}`))
+	let losesscore = $("<div>").addClass("score").append($("<p>").text(`loses: ${loses}`))
+	let drawsscore = $("<div>").addClass("score").append($("<p>").text(`draws: ${draws}`))
+	$(`#${uid}scores`).append(outcomescore, winsscore, losesscore, drawsscore)
+
+	//** opp score */
+	let oppoutcomescore = $("<div>").addClass("score").append($("<p>").text(oppoutcome))
+	let oppwinsscore = $("<div>").addClass("score").append($("<p>").text(`wins: ${oppwins}`))
+	let opplosesscore = $("<div>").addClass("score").append($("<p>").text(`loses: ${opploses}`))
+	let oppdrawsscore = $("<div>").addClass("score").append($("<p>").text(`draws: ${oppdraws}`))
+	$(`#${oid}scores`).append(oppoutcomescore, oppwinsscore, opplosesscore, oppdrawsscore)
+}
+
+function optionClicked(playerchoice) {
+
+	database.ref(`/connections/${udbid}`).update({
+		choice: playerchoice
+	})
+
+}
+
+
+
+$(document).ready(function () {
+	$(".options").on("click", ".option", function () {
+		playerchoice = ($(this).text())
+		optionClicked(playerchoice)
+	})
+
+})
