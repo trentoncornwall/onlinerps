@@ -1,68 +1,178 @@
+@import url("https://fonts.googleapis.com/css?family=Roboto&display=swap");
+
 body {
-    height: 100vh;
-    display: grid;
-    grid-template-columns: 1fr 3fr 3fr 1fr;
-    grid-template-rows: 1fr 3fr 1fr;
-    grid-template-areas:
-        ". . . ."
-        ". playerone playertwo ."
-        ". outcome . .";
+	height: 100vh;
+	font-family: "Roboto", sans-serif;
+	font-size: 18px;
+	display: grid;
+	grid-template-columns: 1fr 3fr 1fr;
+	grid-template-rows: 40px 3fr 1fr;
+	grid-template-areas:
+		". . ."
+		". cards ."
+		". chat .";
+}
+.cards {
+	grid-area: cards;
+	display: grid;
+	background: #f5f5f5;
+	margin-bottom: 15px;
+	grid-template-columns: 1fr 1fr;
+	grid-template-areas: "playerone playertwo";
 }
 
+.chat {
+	grid-area: chat;
+}
 #playerone {
-    grid-area: playerone;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr 2fr 3fr;
-    grid-template-areas:
-        "p1header"
-        "p1name"
-        "p1options"
-        "p1scores";
+	grid-area: playerone;
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: 1fr 1fr 2fr 2fr;
+	grid-template-areas:
+		"p1header"
+		"p1name"
+		"p1options"
+		"p1scores";
 }
 
-#p1header {
-    grid-area: p1header;
+#playeroneheader {
+	grid-area: p1header;
 }
 
-#p1name {
-    grid-area: p1name;
+#playeronename {
+	grid-area: p1name;
 }
 
-#p1scores {
-    grid-area: p1scores;
+#playeronescores {
+	grid-area: p1scores;
 }
 
-#p1options {
-    grid-area: p1options;
+#playeroneoptions {
+	grid-area: p1options;
 }
 
 #playertwo {
-    grid-area: playertwo;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: 1fr 1fr 2fr 3fr;
-    grid-template-areas:
-        "p2header"
-        "p2name"
-        "p2options"
-        "p2scores";
+	grid-area: playertwo;
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: 1fr 1fr 2fr 2fr;
+	grid-template-areas:
+		"p2header"
+		"p2name"
+		"p2options"
+		"p2scores";
+}
+#playerptwoheader {
+	grid-area: p1header;
 }
 
-
-#p2name {
-    grid-area: p2name;
+#playertwoname {
+	grid-area: p2name;
 }
 
-#p2scores {
-    grid-area: p2scores;
+#playertwoscores {
+	grid-area: p2scores;
 }
 
-#p2options {
-    grid-area: p2options;
+#playertwooptions {
+	grid-area: p2options;
 }
 
+.cardheader {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
 
-.outcome {
-    grid-area: outcome
+.names {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.options {
+	/* border: 1px solid black; */
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+	align-items: center;
+
+	color: #555;
+	font-size: 22px;
+	padding: 0 !important;
+	width: 500px;
+	font-family: courier, monospace;
+	border: 1px solid #dedede;
+}
+
+.options div {
+	list-style: none;
+	border-bottom: 1px dotted #ccc;
+	text-indent: 25px;
+	width: 100%;
+	height: auto;
+	padding: 10px;
+	text-transform: capitalize;
+}
+
+.option div:hover {
+	background-color: #f0f0f0;
+	-webkit-transition: all 0.2s;
+	-moz-transition: all 0.2s;
+	-ms-transition: all 0.2s;
+	-o-transition: all 0.2s;
+}
+.scores {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-evenly;
+	align-items: center;
+}
+
+.playercards {
+	border: 1px solid black;
+}
+
+#playerone {
+	margin-right: 10px;
+}
+#playertwo {
+	margin-left: 10px;
+}
+
+/* 
+CHAT DISPLAY
+*/
+
+#chatid {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+}
+.chat_display {
+	width: 100%;
+	height: 200px;
+	margin-left: 10%;
+	margin-right: 10%;
+	position: relative;
+	overflow-y: scroll;
+	padding: 8px 24px;
+	border: 1px solid black;
+}
+
+.chat input {
+	width: 600px;
+}
+
+.chatline {
+	height: 20px;
+	display: flex;
+	flex-wrap: nowrap;
+}
+
+.chatline .cname {
+	text-transform: capitalize;
+	margin-right: 10px;
 }

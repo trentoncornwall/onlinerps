@@ -18,7 +18,7 @@ var database = firebase.database();
 //* playerone or playertwo
 var uid = null;
 var oid = null;
-var name = null;
+var name = "anon";
 var udbid = null;
 var odbid = null;
 var wins = 0;
@@ -41,6 +41,9 @@ var connectionsRef = database.ref("/connections");
 //* false = client not connected
 var connectedRef = database.ref(".info/connected");
 
+// chat database reference
+var chatRef = database.ref("/chat");
+
 //client connection event listener
 connectedRef.on("value", function(snapshot) {
 	//* if connected
@@ -57,6 +60,7 @@ connectedRef.on("value", function(snapshot) {
 		});
 
 		con.onDisconnect().remove();
+		chatRef.remove();
 	}
 });
 
@@ -93,6 +97,7 @@ connectionsRef.on("value", function(snapshot) {
 		//* sets up pathways and records
 		var yourDB = snapshot.child(udbid).val();
 		var oppDB = snapshot.child(odbid).val();
+
 		wins = yourDB.wins;
 		loses = yourDB.loses;
 		draws = yourDB.draws;
@@ -266,6 +271,36 @@ connectionsRef.on("value", function(snapshot) {
 	}
 });
 
+//* chat display
+
+chatRef.on("value", function(snapshot) {
+	if (snapshot.val()) {
+		if (snapshot.val().name) {
+			let chat_name = snapshot.val().name;
+			let chat_message = snapshot.val().message;
+
+			//* checks if its you that inserted message
+			if (chat_name === name) {
+				chat_name = "you";
+			}
+
+			//* creates message
+			let newDiv = $("<div>").addClass("chatline");
+			let new_message_name = $("<p>")
+				.addClass("cname")
+				.text(chat_name + ":");
+			let new_message = $("<p>")
+				.addClass("cmessage")
+				.text(chat_message);
+
+			newDiv.append(new_message_name, new_message);
+			$(".chat_display").append(newDiv);
+
+			// keeps user scrolled to the bottom /
+			$(".chat_display").scrollTop($(".chat_display")[0].scrollHeight);
+		}
+	}
+});
 //!-------------------------------- END connection reference block -------------------------//
 //* creates rock paper scissors options
 function createOptions() {
@@ -344,6 +379,20 @@ function submitedForm() {
 
 	database.ref(`/connections/${udbid}`).update({
 		name: name
+	});
+}
+
+function chatForm() {
+	event.preventDefault();
+	//* retrieves message
+	message = $(".chat_input")
+		.val()
+		.trim();
+
+	$(".chat_input").val("");
+	chatRef.set({
+		name: name,
+		message: message
 	});
 }
 

@@ -18,21 +18,31 @@
 </head>
 
 <body>
+	<div class="cards">
 
-	<div class="playercards" id="playerone">
-		<div class="cardheader" id="playeroneheader"></div>
-		<div class="names" id="playeronename"></div>
-		<div class="options" id="playeroneoptions"></div>
-		<div class="scores" id="playeronescores"></div>
+			<div class="playercards" id="playerone">
+					<div class="cardheader" id="playeroneheader"></div>
+					<div class="names" id="playeronename"></div>
+					<div class="options" id="playeroneoptions"></div>
+					<div class="scores" id="playeronescores"></div>
+				</div>
+				<div class="playercards" id="playertwo">
+					<div class="cardheader" id="playertwoheader"></div>
+					<div class="names" id="playertwoname"></div>
+					<div class="options" id="playertwooptions"></div>
+					<div class="scores" id="playertwoscores"></div>
+				</div>
 	</div>
-	<div class="playercards" id="playertwo">
-		<div class="cardheader" id="playertwoheader"></div>
-		<div class="names" id="playertwoname"></div>
-		<div class="options" id="playertwooptions"></div>
-		<div class="scores" id="playertwoscores"></div>
+
+	<div class="chat" id="chatid">
+		<div class="chat_display">
+
+		</div>
+		<form onSubmit="chatForm()">
+			<input class="chat_input"></input>
+			<button>send</button>
+		</form>
 	</div>
-	<div class="outcome"></div>
-	<div class="chat"></div>
 	<script src="assets/javascript/app.js"></script>
 </body>
 
