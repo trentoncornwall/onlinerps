@@ -45,7 +45,7 @@ var connectedRef = database.ref(".info/connected");
 var chatRef = database.ref("/chat");
 
 //client connection event listener
-connectedRef.on("value", function(snapshot) {
+connectedRef.on("value", function (snapshot) {
 	//* if connected
 	if (snapshot.val()) {
 		var con = connectionsRef.push(true);
@@ -64,7 +64,7 @@ connectedRef.on("value", function(snapshot) {
 	}
 });
 
-connectionsRef.on("value", function(snapshot) {
+connectionsRef.on("value", function (snapshot) {
 	// sets user profile
 	if (uid === null) {
 		if (snapshot.numChildren() === 1) {
@@ -125,7 +125,7 @@ connectionsRef.on("value", function(snapshot) {
 
 		if (!oppDB.name) {
 			$(`#${oid}name`).empty();
-			$(`#${oid}name`).append($("<p>").text("waiting on player name"));
+			$(`#${oid}name`).append($("<p>").text("name"));
 		} else {
 			$(`#${oid}name`).empty();
 			$(`#${oid}name`).append($("<p>").text(oppDB.name));
@@ -273,7 +273,7 @@ connectionsRef.on("value", function(snapshot) {
 
 //* chat display
 
-chatRef.on("value", function(snapshot) {
+chatRef.on("value", function (snapshot) {
 	if (snapshot.val()) {
 		if (snapshot.val().name) {
 			let chat_name = snapshot.val().name;
@@ -397,8 +397,8 @@ function chatForm() {
 }
 
 //* event listenters
-$(document).ready(function() {
-	$(".options").on("click", ".option", function() {
+$(document).ready(function () {
+	$(".options").on("click", ".option", function () {
 		playerchoice = $(this).text();
 		optionClicked(playerchoice);
 	});

@@ -2,20 +2,21 @@
 
 body {
 	height: 100vh;
+	color: rgb(241, 241, 241);
+	background: rgb(0, 140, 175);
 	font-family: "Roboto", sans-serif;
-	font-size: 18px;
 	display: grid;
-	grid-template-columns: 1fr 3fr 1fr;
-	grid-template-rows: 40px 3fr 1fr;
+	grid-template-columns: 1fr 2fr 1fr;
+	grid-template-rows: 10px 2fr 1fr;
 	grid-template-areas:
 		". . ."
 		". cards ."
 		". chat .";
 }
+
 .cards {
 	grid-area: cards;
 	display: grid;
-	background: #f5f5f5;
 	margin-bottom: 15px;
 	grid-template-columns: 1fr 1fr;
 	grid-template-areas: "playerone playertwo";
@@ -24,15 +25,19 @@ body {
 .chat {
 	grid-area: chat;
 }
+
 #playerone {
 	grid-area: playerone;
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-template-rows: 1fr 1fr 2fr 2fr;
+	grid-template-rows: 1fr 10px 1fr 10px 2fr 10px 2fr;
 	grid-template-areas:
 		"p1header"
+		"hrone"
 		"p1name"
+		"hrtwo"
 		"p1options"
+		"hrthree"
 		"p1scores";
 }
 
@@ -40,12 +45,24 @@ body {
 	grid-area: p1header;
 }
 
+#hrone {
+	grid-area: hrone;
+}
+
 #playeronename {
 	grid-area: p1name;
 }
 
+#hrtwo {
+	grid-area: hrtwo;
+}
+
 #playeronescores {
 	grid-area: p1scores;
+}
+
+#hrthree {
+	grid-area: hrthree;
 }
 
 #playeroneoptions {
@@ -56,27 +73,52 @@ body {
 	grid-area: playertwo;
 	display: grid;
 	grid-template-columns: 1fr;
-	grid-template-rows: 1fr 1fr 2fr 2fr;
+	grid-template-rows: 1fr 10px 1fr 10px 2fr 10px 2fr;
 	grid-template-areas:
 		"p2header"
+		"hrfour"
 		"p2name"
+		"hrfive"
 		"p2options"
+		"hrsix"
 		"p2scores";
 }
+
 #playerptwoheader {
 	grid-area: p1header;
+}
+
+#hrfour {
+	grid-area: hrfour;
 }
 
 #playertwoname {
 	grid-area: p2name;
 }
 
+#hrfive {
+	grid-area: hrfive;
+}
+
 #playertwoscores {
 	grid-area: p2scores;
 }
 
+#hrsix {
+	grid-area: hrsix;
+}
+
 #playertwooptions {
 	grid-area: p2options;
+}
+
+/* 
+ end of css grid
+
+*/
+
+.playercards {
+	background-color: rgb(37, 37, 37);
 }
 
 .cardheader {
@@ -92,37 +134,13 @@ body {
 }
 
 .options {
-	/* border: 1px solid black; */
 	display: flex;
 	flex-direction: column;
 	justify-content: space-evenly;
 	align-items: center;
 
-	color: #555;
-	font-size: 22px;
-	padding: 0 !important;
-	width: 500px;
-	font-family: courier, monospace;
-	border: 1px solid #dedede;
 }
 
-.options div {
-	list-style: none;
-	border-bottom: 1px dotted #ccc;
-	text-indent: 25px;
-	width: 100%;
-	height: auto;
-	padding: 10px;
-	text-transform: capitalize;
-}
-
-.option div:hover {
-	background-color: #f0f0f0;
-	-webkit-transition: all 0.2s;
-	-moz-transition: all 0.2s;
-	-ms-transition: all 0.2s;
-	-o-transition: all 0.2s;
-}
 .scores {
 	display: flex;
 	flex-direction: column;
@@ -130,16 +148,47 @@ body {
 	align-items: center;
 }
 
-.playercards {
-	border: 1px solid black;
-}
 
 #playerone {
 	margin-right: 10px;
+	/* shadow */
+	-webkit-box-shadow: -1px 1px 12px 0px rgba(0, 0, 0, 0.75);
+	-moz-box-shadow: -1px 1px 12px 0px rgba(0, 0, 0, 0.75);
+	box-shadow: -1px 1px 12px 0px rgba(0, 0, 0, 0.75);
+	/* raidus border */
+	border-radius: 71px 10px 10px 71px;
+	-moz-border-radius: 71px 10px 10px 71px;
+	-webkit-border-radius: 71px 10px 10px 71px;
 }
+
 #playertwo {
 	margin-left: 10px;
+	/* shadows */
+	-webkit-box-shadow: -1px 1px 12px 0px rgba(0, 0, 0, 0.75);
+	-moz-box-shadow: -1px 1px 12px 0px rgba(0, 0, 0, 0.75);
+	box-shadow: -1px 1px 12px 0px rgba(0, 0, 0, 0.75);
+	/* raidus border */
+	border-radius: 10px 71px 70px 0px;
+	-moz-border-radius: 10px 71px 70px 0px;
+	-webkit-border-radius: 10px 71px 70px 0px;
 }
+
+.hr_style1 {
+	width: 90%;
+	border: 0;
+	height: 0;
+	border-top: 1px solid rgba(0, 0, 0, 0.616);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.76);
+}
+
+.hr_style2 {
+	width: 80%;
+	border: 0;
+	height: 0;
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
 
 /* 
 CHAT DISPLAY
@@ -151,19 +200,44 @@ CHAT DISPLAY
 	justify-content: center;
 	align-items: center;
 }
+
+.chat {
+	margin: 10px;
+}
+
+
 .chat_display {
 	width: 100%;
-	height: 200px;
+	height: 150px;
 	margin-left: 10%;
 	margin-right: 10%;
 	position: relative;
 	overflow-y: scroll;
 	padding: 8px 24px;
-	border: 1px solid black;
+	color: black;
+	background: rgb(226, 226, 226);
+	border: 0;
+}
+
+.chat form {
+	width: 100%;
+	margin-left: 10%;
+	margin-right: 10%;
 }
 
 .chat input {
-	width: 600px;
+	height: 20px;
+	width: 80%;
+}
+
+.chat button {
+	height: 25px;
+	width: 17%;
+	border: 0;
+	margin: 0;
+	border-radius: 0px;
+	color: rgb(0, 140, 175);
+	background: rgb(243, 243, 243);
 }
 
 .chatline {
@@ -175,4 +249,91 @@ CHAT DISPLAY
 .chatline .cname {
 	text-transform: capitalize;
 	margin-right: 10px;
+}
+
+/* 
+hard hearder
+*/
+
+.cardheader {
+	font-weight: bold;
+	text-transform: uppercase;
+	color: rgba(0, 140, 175);
+}
+
+/* 
+names div
+*/
+
+.names {
+	flex-wrap: wrap;
+}
+
+#name_form {
+	width: 80%;
+}
+
+#name_form input {
+	padding-left: 5px;
+	height: 20px;
+	width: 70%;
+}
+
+#name_form button {
+	height: 26px;
+	width: 25%;
+	border: 0;
+	border-radius: 4px;
+	color: white;
+	background: rgb(0, 140, 175);
+}
+
+#playeronename input {
+	border-radius: 10px 0px 0px 4px;
+	-moz-border-radius: 10px 0px 0px 4px;
+	-webkit-border-radius: 10px 0px 0px 4px;
+}
+
+#playeronename button {
+	border-radius: 0px 19px 19px 0px;
+	-moz-border-radius: 0px 19px 19px 0px;
+	-webkit-border-radius: 0px 19px 19px 0px;
+}
+
+
+#playertwoname input {
+	border-radius: 4px 0px 0px 4px;
+	-moz-border-radius: 4px 0px 0px 4px;
+	-webkit-border-radius: 4px 0px 0px 4px;
+}
+
+#playertwoname button {
+	border-radius: 0px 19px 10px 0px;
+	-moz-border-radius: 0px 19px 10px 0px;
+	-webkit-border-radius: 0px 19px 10px 0px;
+}
+
+/* 
+options
+*/
+.options {
+	margin-top: 5px;
+}
+
+.option {
+	width: 80%;
+	background: rgb(100, 100, 100);
+	border: 1px solid rgba(1, 8, 48, 0.158);
+	transition: width .5s;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+.option p {
+	text-align: center;
+}
+
+.option:hover {
+	color: rgb(0, 140, 175);
+	width: 90%;
 }
