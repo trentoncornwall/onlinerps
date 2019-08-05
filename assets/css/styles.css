@@ -3,10 +3,10 @@
 body {
 	height: 100vh;
 	color: rgb(241, 241, 241);
-	background: rgb(0, 140, 175);
+	background: rgba(0, 140, 175, 0.514);
 	font-family: "Roboto", sans-serif;
 	display: grid;
-	grid-template-columns: 1fr 2fr 1fr;
+	grid-template-columns: 20% 60% 20%;
 	grid-template-rows: 10px 2fr 1fr;
 	grid-template-areas:
 		". . ."
@@ -118,7 +118,7 @@ body {
 */
 
 .playercards {
-	background-color: rgb(37, 37, 37);
+	background-color: rgb(68, 68, 68);
 }
 
 .cardheader {
@@ -144,8 +144,9 @@ body {
 .scores {
 	display: flex;
 	flex-direction: column;
-	justify-content: space-evenly;
+	justify-content: center;
 	align-items: center;
+	align-content: flex-end;
 }
 
 
@@ -322,9 +323,9 @@ options
 
 .option {
 	width: 80%;
-	background: rgb(100, 100, 100);
+	background: rgb(160, 160, 160);
 	border: 1px solid rgba(1, 8, 48, 0.158);
-	transition: width .5s;
+	transition: width .3s;
 	border-radius: 10px;
 	cursor: pointer;
 }
@@ -336,4 +337,18 @@ options
 .option:hover {
 	color: rgb(0, 140, 175);
 	width: 90%;
+}
+
+
+@media only screen and (max-width: 980px) {
+	body {
+		grid-template-columns: 10% 80% 10%;
+	}
+}
+
+
+@media only screen and (max-width: 680px) {
+	body {
+		grid-template-columns: 1% 98% 1%;
+	}
 }
